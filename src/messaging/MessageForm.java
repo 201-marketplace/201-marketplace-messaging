@@ -39,8 +39,12 @@ public class MessageForm extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/messages?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
-			
-			String sqlInsert = "INSERT INTO messagedata " +
+			// example query
+			/* 
+			 * insert into messagedata
+				values (5, 'hello world', '2008-11-11 13:23:44', 6, 6)
+			 * */
+			String sqlInsert = "INSERT INTO messagedata (messageText, messageTime, senderID, receiverID) " +
 							"VALUES ('" + msg.message + "', " + msg.cal + ", " + msg.senderID + ", " + msg.receiverID + ")";
 			st.executeUpdate(sqlInsert);
 		} catch (SQLException sqle) {
