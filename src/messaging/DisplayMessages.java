@@ -38,13 +38,24 @@ public class DisplayMessages extends HttpServlet {
 								"WHERE m.receiverID=" + receiver + " " +
 								"AND m.senderID=" + sender + " " + 
 								"ORDER BY m.messageTime ASC;");
+			receivedMessages = st.executeQuery("SELECT * " + 
+								"FROM messages m " + 
+								"WHERE m.receiverID=" + sender + " " +
+								"AND m.senderID=" + receiver + " " + 
+								"ORDER BY m.messageTime ASC;");
 			while(sentMessages.next()) {
-				String fname = rs.getString("fname");
-				String lname = rs.getString("lname");
-				String prefix = rs.getString("prefix");
-				int num = rs.getInt("num");
-				String letterGrade = rs.getString("letterGrade");
+				// code from class
+				// not sure what to do with result sets
+				// need to be returned to front-end
+				String fname = sentMessages.getString("fname");
+				String lname = sentMessages.getString("lname");
+				String prefix = sentMessages.getString("prefix");
+				int num = sentMessages.getInt("num");
+				String letterGrade = sentMessages.getString("letterGrade");
 				System.out.println(fname + "\t" + lname + "\t" + prefix + "\t" + num + "\t" + letterGrade);
+			}
+			while(receivedMessages.next()) {
+				// not sure what to do with result sets
 			}
 		} catch (SQLException sqle) {
 			System.out.println("sqle: " + sqle.getMessage());
@@ -53,9 +64,10 @@ public class DisplayMessages extends HttpServlet {
 		} 
 		finally {
 			try {
-				if (rs != null) {
-					rs.close();
+				if (sentMessages != null) {
+					sentMessages.close();
 				}
+				
 				if (st != null) {
 					st.close();
 				}
