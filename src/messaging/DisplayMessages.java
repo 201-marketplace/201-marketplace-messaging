@@ -22,23 +22,23 @@ public class DisplayMessages extends HttpServlet {
 	
 	// queries SQL database for messages between sender and receiver
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int receiver = Integer.parseInt(request.getParameter("receiverID"));
+		int sender = Integer.parseInt(request.getParameter("senderID"));
+		
 		Connection conn = null;
-		java.sql.PreparedStatement  ps = null;
 		Statement st = null;
-		ResultSet rs = null;
+		ResultSet sentMessages = null;
+		ResultSet receivedMessages = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/messages?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
-			String firstName = "Howard' OR '1'='1";
-			rs = st.executeQuery("SELECT s.fname, s.lname, c.prefix, c.num, g.letterGrade " + 
-								"FROM Student s, Grade g, Class c " + 
-								"WHERE s.fname='" + firstName + "' " +
-								"AND s.studentID=g.studentID " + 
-								"AND c.classID = g.classID;");
-			// if we used PreparedStatement, we'd run the below
-			//ps.executeQuery();
-			while(rs.next()) {
+			sentMessages = st.executeQuery("SELECT * " + 
+								"FROM messages m " + 
+								"WHERE m.receiverID=" + receiver + " " +
+								"AND m.senderID=" + sender + " " + 
+								"ORDER BY m.messageTime ASC;");
+			while(sentMessages.next()) {
 				String fname = rs.getString("fname");
 				String lname = rs.getString("lname");
 				String prefix = rs.getString("prefix");
