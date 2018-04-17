@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Servlet implementation class DisplayMessages
+ * When loading messages page, call servlet with receiver user ID and sender user ID
  */
 @WebServlet("/DisplayMessages")
 public class DisplayMessages extends HttpServlet {
@@ -33,11 +34,15 @@ public class DisplayMessages extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/messages?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
+			
+			// returns ResultSet of messages sent by current user to the user they are messaging
 			sentMessages = st.executeQuery("SELECT * " + 
 								"FROM messages m " + 
 								"WHERE m.receiverID=" + receiver + " " +
 								"AND m.senderID=" + sender + " " + 
 								"ORDER BY m.messageTime ASC;");
+			
+			// returns ResultSet of messages received by current user from the user they are messaging
 			receivedMessages = st.executeQuery("SELECT * " + 
 								"FROM messages m " + 
 								"WHERE m.receiverID=" + sender + " " +
@@ -47,7 +52,7 @@ public class DisplayMessages extends HttpServlet {
 				// code from class
 				// not sure what to do with result sets
 				// need to be returned to front-end
-				String fname = sentMessages.getString("fname");
+				String fname = sentMessages.getString("");
 				String lname = sentMessages.getString("lname");
 				String prefix = sentMessages.getString("prefix");
 				int num = sentMessages.getInt("num");
@@ -67,7 +72,9 @@ public class DisplayMessages extends HttpServlet {
 				if (sentMessages != null) {
 					sentMessages.close();
 				}
-				
+				if (receivedMessages != null) {
+					receivedMessages.close();
+				}
 				if (st != null) {
 					st.close();
 				}

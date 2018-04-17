@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Servlet implementation class MessageForm
+ * When a user sends a message, forward to servlet with the message text, the receiver's user ID and the sender's user ID
  */
 @WebServlet("/MessageForm")
 public class MessageForm extends HttpServlet {
@@ -22,13 +23,18 @@ public class MessageForm extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		
+		// get request
 		String messageText = request.getParameter("text");
 		int receiver = Integer.parseInt(request.getParameter("receiverID"));
 		int sender = Integer.parseInt(request.getParameter("senderID"));
+		
+		// Create new Message object which will also get date/time
+		// Insert message into SQL database
 		Message msg = new Message(messageText, sender, receiver);
 		updateMessages(msg);
 		out.println("Message recorded!");
+		
+		//no response text needed
 	}
 	
 	//add Message to message database	
@@ -45,7 +51,7 @@ public class MessageForm extends HttpServlet {
 				values (5, 'hello world', '2008-11-11 13:23:44', 6, 6)
 			 * */
 			String sqlInsert = "INSERT INTO messagedata (messageText, messageTime, senderID, receiverID) " +
-							"VALUES ('" + msg.message + "', " + msg.cal + ", " + msg.senderID + ", " + msg.receiverID + ")";
+							"VALUES ('" + msg.message + "', '" + msg.datetime + "', " + msg.senderID + ", " + msg.receiverID + ")";
 			st.executeUpdate(sqlInsert);
 		} catch (SQLException sqle) {
 			System.out.println("sqle: " + sqle.getMessage());
@@ -66,3 +72,5 @@ public class MessageForm extends HttpServlet {
 		}
 	}
 }
+
+
